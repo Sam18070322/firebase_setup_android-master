@@ -66,18 +66,24 @@ class _MeetAttendieState extends State<MeetAttendie> {
             type: BottomNavigationBarType.fixed,
             onTap: (int index) {
               setState(() {
-                _selectedItemIndex = index;
+                if (index != 2)
+                  _selectedItemIndex = index;
+                else
+                  signOut();
               });
             },
             items: [
               BottomNavigationBarItem(
+                title: Text(""),
                 icon: Icon(Icons.home),
               ),
               BottomNavigationBarItem(
+                title: Text(""),
                 icon: Icon(Icons.calendar_today),
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.contact_page),
+                title: Text(""),
+                icon: Icon(Icons.logout),
               ),
             ],
           ),

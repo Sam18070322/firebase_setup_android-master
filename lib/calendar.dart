@@ -11,7 +11,6 @@ class CalendarPage extends StatefulWidget {
 }
 
 class _CalendarPageState extends State<CalendarPage> {
-  @override
   DateTime selectedDate = DateTime.now();
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,16 +84,18 @@ class _DatePickerClassState extends State<DatePickerClass> {
                       .snapshots(),
               builder: (BuildContext context,
                   AsyncSnapshot<DocumentSnapshot> snapshot) {
+                if (snapshot.hasData && snapshot.data!.exists) {
+                  return Column(children: [
+                    buildPresentlist(context, snapshot.data!.get('lec1')),
+                    buildPresentlist(context, snapshot.data!.get('lec2'))
+                  ]);
+                }
                 if (!snapshot.data!.exists) {
                   return Container(
                     child: noDataFound(context),
                   );
                 } else {
-                  return Column(children: [
-                    buildPresentlist(context, snapshot.data!.get('lec1')),
-                    buildPresentlist(context, snapshot.data!.get('lec2'))
-                  ]);
-
+                  return CircularProgressIndicator.adaptive();
                   //Container(child: Text(snapshot.data!.get('lec1').toString()));
                 }
               })

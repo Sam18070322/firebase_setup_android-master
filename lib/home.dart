@@ -24,6 +24,7 @@ class _HomePage1State extends State<HomePage1> {
           }
           return Stack(children: [
             headerArea(),
+            //GetUserName(uid),
             Positioned(
               top: 185,
               child: Container(
@@ -188,7 +189,277 @@ Widget headerArea() {
   return StreamBuilder(
       stream:
           //FirebaseFirestore.instance.collection('170240107066').doc('attendance').snapshots(),
-          FirebaseFirestore.instance.collection(uid).snapshots(),
+          FirebaseFirestore.instance.collection("STUDENTS").snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (!snapshot.hasData) {
+          return Center(child: CircularProgressIndicator());
+        }
+
+        return Container(
+          decoration: BoxDecoration(
+              //color: Color(0xFFD4E7FE),
+              gradient: LinearGradient(
+                  colors: [
+                    Color(0xFFD4E7FE),
+                    Color(0xFFF0F0F0),
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  stops: [0.6, 0.3])),
+          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 50),
+          child: Column(
+            children: [
+              Container(
+                alignment: Alignment.centerRight,
+                child: RichText(
+                    text: TextSpan(
+                  text: 'DATE : ' +
+                      now.day.toString() +
+                      '-' +
+                      now.month.toString() +
+                      '-' +
+                      now.year.toString(),
+                  style: TextStyle(
+                      color: Color(0XFF263064),
+                      fontSize: 12,
+                      fontWeight: FontWeight.normal),
+                )),
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(width: 1, color: Colors.white),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.blueGrey.shade900.withOpacity(0.2),
+                          blurRadius: 12,
+                          spreadRadius: 8,
+                        )
+                      ],
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: AssetImage('graphics/avatar.png'),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        children: [
+                          Text(
+                            "hi",
+                            //snapshot.data!.docs.toString(),
+                            //snapshot.data!.collection.id,
+                            // snapshot.data!.docs[0]['name'],
+                            // snapshot.data!.docs[0]['name'].toString(),
+                            // _auth.currentUser!.email.toString(),
+                            style: TextStyle(
+                              fontSize: 25,
+                              fontWeight: FontWeight.w900,
+                              color: Color(0XFF343E87),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        _auth.currentUser!.email.toString(),
+                        //snapshot.data!.docs[0]['eid'],
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.blueGrey,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Text(
+                        _auth.currentUser!.email.toString(),
+                        //snapshot.data!.docs[0]['email'],
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.blueGrey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              )
+            ],
+          ),
+        );
+      });
+}
+/*
+class GetUserName extends StatefulWidget {
+  final String documentId;
+
+  GetUserName(this.documentId);
+
+  @override
+  _GetUserNameState createState() => _GetUserNameState();
+}
+
+class _GetUserNameState extends State<GetUserName> {
+  @override
+  Widget build(BuildContext context) {
+    CollectionReference users =
+        FirebaseFirestore.instance.collection('STUDENTS');
+
+    return StreamBuilder<Object>(
+        stream: null,
+        builder: (context, snapshot) {
+          return FutureBuilder<DocumentSnapshot>(
+            future: users.doc(widget.documentId).get(),
+            builder: (BuildContext context,
+                AsyncSnapshot<DocumentSnapshot> snapshot) {
+              if (snapshot.hasError) {
+                return Text("Something went wrong");
+              }
+
+              if (snapshot.hasData && !snapshot.data!.exists) {
+                return Text("Document does not exist");
+              }
+
+              if (snapshot.connectionState == ConnectionState.done) {
+                Map<String, dynamic> data = snapshot.data!.data()!;
+                //return Text("Full Name: ${data['full_name']} ${data['last_name']}");
+                return Container(
+                  decoration: BoxDecoration(
+                      //color: Color(0xFFD4E7FE),
+                      gradient: LinearGradient(
+                          colors: [
+                            Color(0xFFD4E7FE),
+                            Color(0xFFF0F0F0),
+                          ],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          stops: [0.6, 0.3])),
+                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 50),
+                  child: Column(
+                    children: [
+                      Container(
+                        alignment: Alignment.centerRight,
+                        child: RichText(
+                            text: TextSpan(
+                          text: 'DATE : ' +
+                              now.day.toString() +
+                              '-' +
+                              now.month.toString() +
+                              '-' +
+                              now.year.toString(),
+                          style: TextStyle(
+                              color: Color(0XFF263064),
+                              fontSize: 12,
+                              fontWeight: FontWeight.normal),
+                        )),
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(width: 1, color: Colors.white),
+                              boxShadow: [
+                                BoxShadow(
+                                  color:
+                                      Colors.blueGrey.shade900.withOpacity(0.2),
+                                  blurRadius: 12,
+                                  spreadRadius: 8,
+                                )
+                              ],
+                              image: DecorationImage(
+                                fit: BoxFit.cover,
+                                image: AssetImage('graphics/avatar.png'),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Column(
+                                children: [
+                                  Text(
+                                    //snapshot.data!.collection.id,
+                                    //snapshot.data!.docs[0]['name'],
+                                    // snapshot.data!.docs[0]['name'].toString(),
+                                    // _auth.currentUser!.email.toString(),
+                                    "${data['name']}",
+                                    style: TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.w900,
+                                      color: Color(0XFF343E87),
+                                    ),
+                                  )
+                                ],
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                "${data['eid']}",
+                                //_auth.currentUser!.email.toString(),
+                                // snapshot.data!.docs[0]['eid'],
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.blueGrey,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 8,
+                              ),
+                              Text(
+                                _auth.currentUser!.email.toString(),
+                                //snapshot.data!.docs[0]['email'],
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.blueGrey,
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                );
+              }
+
+              return Center(child: CircularProgressIndicator.adaptive());
+            },
+          );
+        });
+  }
+}
+
+Widget headerArea1() {
+  return StreamBuilder(
+      stream:
+          //FirebaseFirestore.instance.collection('170240107066').doc('attendance').snapshots(),
+          FirebaseFirestore.instance.collection("STUDENTS").snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (!snapshot.hasData) {
           return Center(child: CircularProgressIndicator());
@@ -259,7 +530,8 @@ Widget headerArea() {
                           Text(
                             //snapshot.data!.collection.id,
                             //snapshot.data!.docs[0]['name'],
-                            _auth.currentUser!.email.toString(),
+                            snapshot.data!.docs[0]['name'].toString(),
+                            // _auth.currentUser!.email.toString(),
                             style: TextStyle(
                               fontSize: 25,
                               fontWeight: FontWeight.w900,
@@ -272,9 +544,9 @@ Widget headerArea() {
                         height: 10,
                       ),
                       Text(
-                        uid.toString(),
+                        //uid.toString(),
                         //_auth.currentUser!.email.toString(),
-                        //snapshot.data!.docs[0]['id'],
+                        snapshot.data!.docs[0]['eid'],
                         style: TextStyle(
                           fontSize: 13,
                           color: Colors.blueGrey,
@@ -300,3 +572,4 @@ Widget headerArea() {
         );
       });
 }
+*/

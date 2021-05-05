@@ -1,7 +1,9 @@
+import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:date_picker_timeline/date_picker_timeline.dart';
-import 'package:intl/intl.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+final FirebaseAuth _auth = FirebaseAuth.instance;
 
 class CalendarPage extends StatefulWidget {
   @override
@@ -22,7 +24,10 @@ class _CalendarPageState extends State<CalendarPage> {
         centerTitle: true,
         backgroundColor: Colors.white,
       ),
-      body: DatePickerClass(),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 5.0, vertical: 3.0),
+        child: DatePickerClass(),
+      ),
       backgroundColor: Colors.white,
     );
   }
@@ -75,7 +80,7 @@ class _DatePickerClassState extends State<DatePickerClass> {
               stream:
                   //FirebaseFirestore.instance.collection('170240107066').doc('attendance').snapshots(),
                   FirebaseFirestore.instance
-                      .collection('180243107006')
+                      .collection(_auth.currentUser!.uid.toString())
                       .doc("${selectedDate.toLocal()}".split(' ')[0])
                       .snapshots(),
               builder: (BuildContext context,
@@ -89,6 +94,7 @@ class _DatePickerClassState extends State<DatePickerClass> {
                     buildPresentlist(context, snapshot.data!.get('lec1')),
                     buildPresentlist(context, snapshot.data!.get('lec2'))
                   ]);
+
                   //Container(child: Text(snapshot.data!.get('lec1').toString()));
                 }
               })
@@ -100,23 +106,21 @@ class _DatePickerClassState extends State<DatePickerClass> {
 
 Container noDataFound(context) {
   return Container(
-    height: MediaQuery.of(context).size.height - 249,
-    color: Colors.white,
     child: Center(
+      child: SingleChildScrollView(
         child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Image.asset(
-          "graphics/error.gif",
-          height: 350,
-          width: 350,
+          // mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset("graphics/error.gif",
+                height: 350, width: 350, fit: BoxFit.cover),
+            Text(
+              "No Data Found",
+              style: TextStyle(fontSize: 35),
+            ),
+          ],
         ),
-        Text(
-          "No Data Found",
-          style: TextStyle(fontSize: 35),
-        ),
-      ],
-    )),
+      ),
+    ),
   );
 }
 
@@ -159,12 +163,20 @@ Column buildPresentlist(BuildContext context, documentz) {
               children: [
                 Container(
                   width: MediaQuery.of(context).size.width - 160,
-                  child: Text(
-                    "Class :" + documentz[1].toString(),
-                    overflow: TextOverflow.ellipsis,
+                  child: Row(
+                    children: [
+                      Text(
+                        "Class :",
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        documentz[1].toString(),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
                 ),
-                Row(
+                /* Row(
                   children: [
                     Icon(
                       Icons.date_range,
@@ -177,17 +189,19 @@ Column buildPresentlist(BuildContext context, documentz) {
                     Container(
                       width: MediaQuery.of(context).size.width - 160,
                       child: Text(
-                        documentz[2].toDate().toString().substring(0, 10),
+                        "${selectedDate.toLocal()}",
+                        // documentz[2].toDate().toString().substring(0, 10),
                         // document['lec1'][2]
                         //    .toDate()
                         //    .toString()
-                        //
+
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(color: Colors.grey, fontSize: 13),
                       ),
                     )
+                   
                   ],
-                ),
+                ),*/
               ],
             )
           ],

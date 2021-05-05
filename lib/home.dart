@@ -1,22 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class HomePage extends StatefulWidget {
+final FirebaseAuth _auth = FirebaseAuth.instance;
+var uid = _auth.currentUser!.uid;
+DateTime now = new DateTime.now();
+
+class HomePage1 extends StatefulWidget {
   @override
-  _HomePageState createState() => _HomePageState();
+  _HomePage1State createState() => _HomePage1State();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePage1State extends State<HomePage1> {
   @override
-  //CollectionReference users = FirebaseFirestore.instance.collection('170240107059');
-  DateTime now = new DateTime.now();
-
   Widget build(BuildContext context) {
     return StreamBuilder(
         stream:
             //FirebaseFirestore.instance.collection('170240107066').doc('attendance').snapshots(),
-            FirebaseFirestore.instance.collection('180243107006').snapshots(),
+            FirebaseFirestore.instance.collection(uid).snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) {
             return Center(child: CircularProgressIndicator());
@@ -100,10 +101,7 @@ class _HomePageState extends State<HomePage> {
                       Container(
                         width: MediaQuery.of(context).size.width - 160,
                         child: Text(
-                          document['lec1'][2]
-                              .toDate()
-                              .toString()
-                              .substring(0, 10),
+                          document.id.toString(),
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(color: Colors.grey, fontSize: 13),
                         ),
@@ -169,10 +167,7 @@ class _HomePageState extends State<HomePage> {
                       Container(
                         width: MediaQuery.of(context).size.width - 160,
                         child: Text(
-                          document['lec2'][2]
-                              .toDate()
-                              .toString()
-                              .substring(0, 10),
+                          document.id.toString().substring(0, 10),
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(color: Colors.grey, fontSize: 13),
                         ),
@@ -193,7 +188,7 @@ Widget headerArea() {
   return StreamBuilder(
       stream:
           //FirebaseFirestore.instance.collection('170240107066').doc('attendance').snapshots(),
-          FirebaseFirestore.instance.collection('170240107059').snapshots(),
+          FirebaseFirestore.instance.collection(uid).snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (!snapshot.hasData) {
           return Center(child: CircularProgressIndicator());
@@ -217,11 +212,11 @@ Widget headerArea() {
                 child: RichText(
                     text: TextSpan(
                   text: 'DATE : ' +
-                      //now.day.toString() +
+                      now.day.toString() +
                       '-' +
-                      //now.month.toString() +
-                      '-',
-                  //now.year.toString(),
+                      now.month.toString() +
+                      '-' +
+                      now.year.toString(),
                   style: TextStyle(
                       color: Color(0XFF263064),
                       fontSize: 12,
@@ -263,7 +258,8 @@ Widget headerArea() {
                         children: [
                           Text(
                             //snapshot.data!.collection.id,
-                            snapshot.data!.docs[0]['name'],
+                            //snapshot.data!.docs[0]['name'],
+                            _auth.currentUser!.email.toString(),
                             style: TextStyle(
                               fontSize: 25,
                               fontWeight: FontWeight.w900,
@@ -276,7 +272,9 @@ Widget headerArea() {
                         height: 10,
                       ),
                       Text(
-                        snapshot.data!.docs[0]['id'],
+                        uid.toString(),
+                        //_auth.currentUser!.email.toString(),
+                        //snapshot.data!.docs[0]['id'],
                         style: TextStyle(
                           fontSize: 13,
                           color: Colors.blueGrey,
@@ -286,7 +284,8 @@ Widget headerArea() {
                         height: 8,
                       ),
                       Text(
-                        snapshot.data!.docs[0]['email'],
+                        _auth.currentUser!.email.toString(),
+                        //snapshot.data!.docs[0]['email'],
                         style: TextStyle(
                           fontSize: 13,
                           color: Colors.blueGrey,
